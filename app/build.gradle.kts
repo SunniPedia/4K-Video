@@ -3,7 +3,6 @@ plugins {
   id("org.jetbrains.kotlin.android")
   id("org.jetbrains.kotlin.plugin.compose")
 }
-
 android {
   namespace = "com.konasl.nagad"
   compileSdk = 36
@@ -20,13 +19,11 @@ android {
   }
   buildFeatures { compose = true }
 }
-
 kotlin {
   compilerOptions {
     jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
   }
 }
-
 dependencies {
   implementation("androidx.core:core-ktx:1.12.0")
   implementation("androidx.activity:activity-compose:1.8.2")
