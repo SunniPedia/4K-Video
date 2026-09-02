@@ -5,17 +5,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+
+      - name: Download Gradle 9.7.0 (no wrapper jar needed)
+        run: |
+          GRADLE_VERSION=9.7.0
+          cd $HOME
+          wget -q https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
+          unzip -q gradle-${GRADLE_VERSION}-bin.zip
+          echo "$HOME/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH
+
       - name: Grant execute permission
-        run: chmod +x gradlew
+        run: chmod +x gradlew || true
+
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: gradle assembleDebug --stacktrace --no-daemon
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
