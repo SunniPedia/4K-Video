@@ -19,52 +19,43 @@ jobs:
           echo "Step 1: Remove Root folder if exists..."
           if [ -d "Root" ]; then
             echo "Root folder found! Moving its content to real root..."
-            # Root er vitore ja ache sob asol root e move
-            shopt -s dotglob
+            shopt -s dotglob nullglob
             mv -v Root/*./ 2>/dev/null || true
-            mv -v Root/.*./ 2>/dev/null || true
             rm -rf Root
             echo "Root folder deleted."
           fi
 
           echo "Step 2: Create correct folders..."
-          mkdir -p app/src/main/java/com/konasl/nagad
-          mkdir -p gradle/wrapper
-          mkdir -p.github/workflows
+          mkdir -p -- app/src/main/java/com/konasl/nagad
+          mkdir -p -- gradle/wrapper
+          mkdir -p --.github/workflows
 
           echo "Step 3: Move files by filename..."
 
-          # Manifest fix
           if [ -f "AndroidManifest.xml" ]; then
             mv -v AndroidManifest.xml app/src/main/AndroidManifest.xml
           fi
-          find. -type f -name "AndroidManifest.xml"! -path "*/app/src/main/AndroidManifest.xml"! -path "*/.git/*" -exec mv -v {} app/src/main/AndroidManifest.xml \; 2>/dev/null || true
 
-          # MainActivity fix
           if [ -f "MainActivity.kt" ]; then
             mv -v MainActivity.kt app/src/main/java/com/konasl/nagad/MainActivity.kt
           fi
-          find. -maxdepth 4 -type f -name "MainActivity.kt"! -path "*/app/src/main/java/com/konasl/nagad/*" -exec mv -v {} app/src/main/java/com/konasl/nagad/ \; 2>/dev/null || true
 
-          # Gradle wrapper fix
           if [ -f "gradle-wrapper.properties" ]; then
             mv -v gradle-wrapper.properties gradle/wrapper/gradle-wrapper.properties
           fi
 
           echo "Final structure:"
           ls -la
-          echo "---"
           find. -type f -not -path "*/.git/*" | sort
 
       - name: Commit and Push
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
           if [ -n "$(git status --porcelain)" ]; then
             git add -A
             git commit -m "fix: remove Root folder and reorganize to correct structure"
             git push
           else
-            echo "Structure already correct, no Root folder found."
+            echo "Structure already correct."
           fi
