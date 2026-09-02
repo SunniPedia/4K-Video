@@ -1,0 +1,23 @@
+name: Build 4K APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Grant execute permission
+        run: chmod +x gradlew
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: 4k-exporter-apk
+          path: app/build/outputs/apk/debug/*.apk
